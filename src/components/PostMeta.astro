@@ -8,6 +8,7 @@ import { getCategoryUrl, getTagUrl } from "../utils/url-utils";
 interface Props {
 	class: string;
 	published: Date;
+    author: string;
 	updated?: Date;
 	tags: string[];
 	category: string | null;
@@ -16,6 +17,7 @@ interface Props {
 }
 const {
 	published,
+    author,
 	updated,
 	tags,
 	category,
@@ -45,6 +47,21 @@ const className = Astro.props.class;
             <span class="text-50 text-sm font-medium">{formatDateToYYYYMMDD(updated)}</span>
         </div>
     )}
+
+    <!-- author -->
+    <div class="flex items-center">
+        <div class="meta-icon">
+            <Icon name="material-symbols:person-outline-rounded" class="text-xl"></Icon>
+        </div>
+        <div class="flex flex-row flex-nowrap items-center">
+            <span
+                class="link-lg transition text-50 text-sm font-medium
+                    hover:text-[var(--primary)] dark:hover:text-[var(--primary)] whitespace-nowrap">
+                {author || "Unknown"}
+            </span>
+        </div>
+    </div>
+
 
     <!-- categories -->
     <div class="flex items-center">

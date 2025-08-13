@@ -55,7 +55,7 @@ export const navBarConfig: NavBarConfig = {
 export const profileConfig: ProfileConfig = {
 	avatar: "assets/images/logo_black.png", // Relative to the /src directory. Relative to the /public directory if it starts with '/'
 	name: "TRUST",
-	bio: "TRUST IN SECURITY, \nSECURITY IN TRUST",
+	bio: "TRUST IN SECURITY, SECURITY IN TRUST",
 	links: [
 		{
 			name: "Home",
@@ -68,6 +68,11 @@ export const profileConfig: ProfileConfig = {
 			name: "GitHub",
 			icon: "fa6-brands:github",
 			url: "https://github.com/TRUST-DIMIGO",
+		},
+		{
+			name: "Instagram",
+			icon: "fa6-brands:instagram",
+			url: "https://www.instagram.com/trust_dimigo/",
 		},
 	],
 };
