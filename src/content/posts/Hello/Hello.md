@@ -2,7 +2,7 @@
 title: 안녕하세요!!
 published: 2025-08-13
 author: Lyla4
-description: '안녕하세요 저는 김리온입니다'
+description: '안녕하세요 저는 김리온이 아닙니다.'
 image: './img/nando_happy.jpg'
 tags: ["Hacking", "Customization"]
 category: 'Lyla4'
