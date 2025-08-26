@@ -1,6 +1,6 @@
 ---
 title: 리눅스 기본 명령어
-published: 2025-08-20
+published: 2025-08-26
 author: Lanzarote
 description: '리눅스의 기본적인 터미널 명령어를 알아봅니다.'
 image: 'https://prd-cyberhub.oss-me-central-1.aliyuncs.com/uploads/t1_g-RJG0CyqV5RtldU0U_ANPu8B5Q'
@@ -92,10 +92,10 @@ lanzarote@lanzarotelinux mysql $
 ```sh
 rm [option] filename
 ```
-| 옵션 | 설명 |
-|-|-|
-| `-r` | Recursive의 줄임말로, 하위 디렉토리까지 전부 지운다. |
-| `-f` | Force의 줄임말로, 쓰기 보호가 되어있는 파일을 유저에게 확인시키지 않고 바로 지운다. |
+| 옵션 | 축약 | 설명 |
+|-|-|-|
+| `-r` | `Recursive` | 하위 디렉토리까지 전부 지운다. |
+| `-f` | `Force` | 쓰기 보호가 되어있는 파일을 유저에게 확인시키지 않고 바로 지운다. |
 ```sh
 lanzarote@lanzarotelinux Project $ git init
 Initialized empty Git repository in /home/lanzarote/Project/.git/
@@ -120,15 +120,21 @@ lanzarote@lanzarotelinux Project $
 ```sh
 mv [options] [source file/directory_name(s)] [destination file/directory_name]
 ```
-mv는 용도가 많다. 
+| 옵션 | 축약 | 설명 |
+|-|-|-|
+| `-i` | `interactive` | 파일을 덮어쓰기 전에 사용자의 확인을 거친다. |
+| `-f` | `force` | 쓰기 보호가 되어있는 파일도 overwrite한다. |
+| `-v` | `verbose` | Move 동작이 실행되고 있는 진행률을 알 수 있다.
 
-| 옵션 | 설명 |
-|-|-|
-| `-f` | 쓰기 보호가 되어있는 파일도 overwrite합니다. |
-| `-n` | 
+mv는 용도가 많다.
+파일의 이름을 바꿀 수도 있고, 파일 또는 디렉토리를 옮길 수도 있으며, 원하는 파일을 덮어쓸 수도 있다. 
 
+### Copy
+```sh
+cp [options] [source file/directory_name(s)] [destination file/directory_name]
+```
+cp 또한 mv와 같은 옵션을 사용할 수 있다. 
 
 > 출처
 >
-> https://www.geeksforgeeks.org/linux-unix/
-
+> https://www.geeksforgeeks.org/linux-unix/basic-shell-commands-in-linux/
