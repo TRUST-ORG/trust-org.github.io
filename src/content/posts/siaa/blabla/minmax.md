@@ -5,7 +5,7 @@ author: siaa
 description: '백준문제를 풀었어요'
 image: ''
 tags: []
-category: 'siaa'
+category: 'Algo'
 draft: false
 ---
 2025년 8월 25일 22시 27분 백준 1999번 최대최소 문제를 풀었습니다.

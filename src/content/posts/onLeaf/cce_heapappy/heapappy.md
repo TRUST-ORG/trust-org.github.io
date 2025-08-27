@@ -5,7 +5,7 @@ author: 'onLeaf'
 description: 'heapappy writeup'
 image: 'https://cdn.discordapp.com/avatars/1001487706267844608/04764b047c96ad414755cb889b85c36c.webp?size=80'
 tags: ['Pwn','cce','sad']
-category: 'onLeaf'
+category: 'PWN'
 draft: false
 ---
 #힙하다.

@@ -5,7 +5,7 @@ author: Lanzarote
 description: '리눅스의 기본적인 터미널 명령어를 알아봅니다.'
 image: 'https://prd-cyberhub.oss-me-central-1.aliyuncs.com/uploads/t1_g-RJG0CyqV5RtldU0U_ANPu8B5Q'
 tags: ["Linux", "Tools"]
-category: 'Lanzarote'
+category: 'Linux'
 draft: false
 ---
 

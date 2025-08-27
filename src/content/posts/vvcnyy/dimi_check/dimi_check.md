@@ -5,7 +5,7 @@ author: Vvcnyy
 description: '다사다난했던 디미고 인원체크 도우미 개발일지'
 image: './image/end.jpg'
 tags: ["DIMIGO", "DIN"]
-category: 'Vvcnyy'
+category: 'Progamming'
 draft: false
 ---
 
