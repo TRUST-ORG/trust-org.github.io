@@ -1,5 +1,5 @@
 ---
-title: 연골어류 기여워
+title: 연골어류
 published: 2025-08-17
 author: 연골어류
 description: '연골어류란'
