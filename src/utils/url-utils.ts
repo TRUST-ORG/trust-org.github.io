@@ -31,6 +31,17 @@ export function getCategoryUrl(category: string | null): string {
 	return url(`/archive/?category=${encodeURIComponent(category.trim())}`);
 }
 
+
+export function getAuthorUrl(author: string | null): string {
+	if (
+		!author ||
+		author.trim() === "" ||
+		author.trim().toLowerCase() === i18n(I18nKey.uncategorized).toLowerCase()
+	)
+		return url("/archive/?uncategorized=true");
+	return url(`/archive/?author=${encodeURIComponent(author.trim())}`);
+}
+
 export function getDir(path: string): string {
 	const lastSlashIndex = path.lastIndexOf("/");
 	if (lastSlashIndex < 0) {
