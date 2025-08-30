@@ -5,7 +5,7 @@ author: Lyla4
 description: 'HackQuest 본선 진출 후기'
 image: './img/logo.png'
 tags: ["KAIST", "대회","해킹"]
-category: 'Lyla4'
+category: 'Hack'
 draft: false
 ---
 카이스트 주관 교육형 해킹대회 HackQuest 본선에 다녀왔다. 카이스트는 처음 가봐서 매우 설렜다.

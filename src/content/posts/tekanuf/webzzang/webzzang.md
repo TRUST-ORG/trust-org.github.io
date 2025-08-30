@@ -4,7 +4,7 @@ published: 2023-09-09
 author: hosung
 description: 웹해커가 되고 싶은 김호성입니다.
 tags: [Hacking Blog , Web, TRUST]
-category: Tekanuf
+category: WEB
 draft: false
 ---
 # 이번 주 웹해킹 공부: XSS와 CSRF

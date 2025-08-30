@@ -5,7 +5,7 @@ author: deom
 description: '수학적 사고의 방법'
 image: ''
 tags: ["math"]
-category: 'deom'
+category: 'Math'
 draft: false
 ---
 
