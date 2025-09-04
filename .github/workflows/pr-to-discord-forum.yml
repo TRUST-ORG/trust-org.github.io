@@ -18,12 +18,17 @@ jobs:
     env:
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
       DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+      DISCORD_TAG_PR: ${{ secrets.DISCORD_TAG_PR }}          # 실제 PR 태그 ID
+      DISCORD_TAG_CLOSED: ${{ secrets.DISCORD_TAG_CLOSED }}  # 실제 PR-CLOSED 태그 ID
     steps:
       - name: Validate required secrets
         run: |
           if [ -z "$DISCORD_WEBHOOK" ]; then
             echo "Error: DISCORD_WEBHOOK_URL secret is required"
             exit 1
+          fi
+          if [ -z "$DISCORD_BOT_TOKEN" ]; then
+            echo "Warning: DISCORD_BOT_TOKEN secret is missing. Bot-only features will be skipped."
           fi
 
       - name: Install dependencies
@@ -37,7 +42,6 @@ jobs:
         run: |
           set -e
           
-          # 변수 설정
           TITLE='${{ github.event.pull_request.title }}'
           NUMBER='${{ github.event.pull_request.number }}'
           AUTHOR='${{ github.event.pull_request.user.login }}'
@@ -49,29 +53,24 @@ jobs:
           DELS='${{ github.event.pull_request.deletions }}'
           BODY='${{ github.event.pull_request.body }}'
           
-          # PR description이 비어있을 경우 기본 메시지 설정
           if [ -z "$BODY" ] || [ "$BODY" = "null" ]; then
             BODY="No description provided."
           fi
           
-          # 포럼 제목: (작성자) - (PR제목)
           FORUM_TITLE="${AUTHOR} - ${TITLE}"
-          
-          # 포럼 내용: PR description + 추가 정보
           FORUM_CONTENT="${BODY}
 
 ---
 **Pull Request Info**
 • **Author:** @${AUTHOR}
-• **PR:** [#${NUMBER}](<${URL}>)
+• **PR:** [#${NUMBER}](${URL})
 • **Branch:** \`${HEAD}\` → \`${BASE}\`
 • **Stats:** ${COMMITS} commits, +${ADDS}/-${DELS} lines"
 
-          # JSON 생성 (jq를 사용하여 안전한 이스케이프)
           jq -n \
             --arg thread_name "$FORUM_TITLE" \
             --arg content "$FORUM_CONTENT" \
-            --argjson applied_tags '["PR"]' \
+            --argjson applied_tags "[\"$DISCORD_TAG_PR\"]" \
             '{
               thread_name: $thread_name,
               content: $content,
@@ -86,7 +85,6 @@ jobs:
         run: |
           set -e
           
-          # 최대 3회 재시도
           for attempt in 1 2 3; do
             echo "Attempt $attempt to create forum thread..."
             
@@ -94,21 +92,16 @@ jobs:
               -X POST "$DISCORD_WEBHOOK?wait=true" \
               -H "Content-Type: application/json" \
               -d @forum_payload.json 2>&1); then
-              
               echo "$RES" > discord_create_response.json
               break
             else
               echo "Attempt $attempt failed: $RES"
-              if [ $attempt -eq 3 ]; then
-                echo "All attempts failed. Exiting."
-                exit 1
-              fi
+              if [ $attempt -eq 3 ]; then exit 1; fi
               sleep 5
             fi
           done
 
-          # thread_id 추출
-          THREAD_ID=$(jq -r '.channel_id // empty' discord_create_response.json)
+          THREAD_ID=$(jq -r '.id // empty' discord_create_response.json)
           if [ -z "$THREAD_ID" ]; then
             echo "Failed to obtain thread_id from response:"
             cat discord_create_response.json
@@ -124,153 +117,90 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
-          
           MARK="<!-- discord-thread-id -->"
           BODY="${MARK}
 Discord Forum Thread ID: ${THREAD_ID}
 [View in Discord](https://discord.com/channels/@me/${THREAD_ID})"
 
-          # 기존 코멘트 찾기
           CID=$(gh api "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
             --jq '.[] | select(.body | contains("'$MARK'")) | .id' 2>/dev/null || true)
 
           if [ -n "$CID" ]; then
-            echo "Updating existing comment (ID: $CID)"
             gh api "repos/${{ github.repository }}/issues/comments/$CID" \
               -X PATCH -f body="$BODY" >/dev/null
           else
-            echo "Creating new comment"
             gh api "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
               -X POST -f body="$BODY" >/dev/null
           fi
 
-      # ── PR CLOSED → 상태댓글 + 태그변경 + (옵션) 봇으로 스레드 아카이브/잠금 ──────────
+      # ── PR CLOSED → 상태댓글 + 태그변경 + 봇으로 스레드 아카이브/잠금 ──────────
       - name: Load thread_id from PR comments
         if: ${{ github.event.action == 'closed' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
-          
           echo "Looking for Discord thread ID in PR comments..."
-          
-          # PR 코멘트에서 thread_id 찾기
           THREAD_ID=$(gh api "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
             --jq '.[] | select(.body | contains("<!-- discord-thread-id -->")) | .body' 2>/dev/null \
             | grep -o 'Discord Forum Thread ID: [0-9]*' \
             | grep -o '[0-9]*$' \
             | head -n1 || true)
-
           if [ -z "$THREAD_ID" ]; then
-            echo "Warning: No Discord thread_id found in PR comments. Skipping Discord updates."
             echo "THREAD_ID=" >> $GITHUB_ENV
           else
             echo "THREAD_ID=$THREAD_ID" >> $GITHUB_ENV
-            echo "Found thread_id: $THREAD_ID"
           fi
 
       - name: Post CLOSED/MERGED status comment (via Webhook)
         if: ${{ github.event.action == 'closed' && env.THREAD_ID != '' }}
         run: |
           set -e
-          
-          # PR 상태 확인
-          if ${{ github.event.pull_request.merged }}; then
-            STATUS="MERGED"
-            EMOJI="🎉"
+          if [ "${{ github.event.pull_request.merged }}" = "true" ]; then
+            STATUS="MERGED"; EMOJI="🎉"
           else
-            STATUS="CLOSED"
-            EMOJI="🔒"
+            STATUS="CLOSED"; EMOJI="🔒"
           fi
-
           ACTOR='${{ github.actor }}'
           URL='${{ github.event.pull_request.html_url }}'
           NUMBER='${{ github.event.pull_request.number }}'
-
           STATUS_MSG="${EMOJI} **PR #${NUMBER} ${STATUS}**
 This pull request has been **${STATUS}** by @${ACTOR}.
-[View PR](<${URL}>)"
+[View PR](${URL})"
 
-          # JSON 생성 및 전송
           for attempt in 1 2 3; do
-            echo "Attempt $attempt to post status message..."
-            
             if curl -sS --fail --max-time 30 \
               -X POST "$DISCORD_WEBHOOK?thread_id=${THREAD_ID}" \
               -H "Content-Type: application/json" \
               -d "$(jq -n --arg content "$STATUS_MSG" '{content: $content}')"; then
-              
-              echo "Status message posted successfully"
               break
             else
-              echo "Attempt $attempt failed"
-              if [ $attempt -eq 3 ]; then
-                echo "Failed to post status message after 3 attempts"
-                exit 1
-              fi
+              if [ $attempt -eq 3 ]; then exit 1; fi
               sleep 5
             fi
           done
 
       - name: Update thread tags to PR-CLOSED (via Bot)
-        if: ${{ github.event.action == 'closed' && env.THREAD_ID != '' && env.DISCORD_BOT_TOKEN != '' }}
+        if: ${{ github.event.action == 'closed' && env.THREAD_ID != '' && env.DISCORD_BOT_TOKEN != '' && env.DISCORD_TAG_CLOSED != '' }}
         run: |
           set -e
-          
           echo "Updating thread tags to PR-CLOSED..."
-          
-          # 태그 변경 (PR → PR-CLOSED)
-          for attempt in 1 2 3; do
-            echo "Attempt $attempt to update thread tags..."
-            
-            if curl -sS --fail --max-time 30 \
-              -X PATCH "https://discord.com/api/v10/channels/${THREAD_ID}" \
-              -H "Authorization: Bot $DISCORD_BOT_TOKEN" \
-              -H "Content-Type: application/json" \
-              -d '{"applied_tags": ["PR-CLOSED"]}'; then
-              
-              echo "Thread tags updated successfully"
-              break
-            else
-              echo "Attempt $attempt failed"
-              if [ $attempt -eq 3 ]; then
-                echo "Failed to update thread tags after 3 attempts"
-                # 태그 업데이트 실패는 치명적이지 않으므로 계속 진행
-                break
-              fi
-              sleep 5
-            fi
-          done
+          curl -sS --fail --max-time 30 \
+            -X PATCH "https://discord.com/api/v10/channels/${THREAD_ID}" \
+            -H "Authorization: Bot $DISCORD_BOT_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"applied_tags\": [\"$DISCORD_TAG_CLOSED\"]}"
 
       - name: Archive & lock thread (via Bot)
         if: ${{ github.event.action == 'closed' && env.THREAD_ID != '' && env.DISCORD_BOT_TOKEN != '' }}
         run: |
           set -e
-          
           echo "Archiving and locking thread..."
-          
-          # 스레드 아카이브 및 잠금
-          for attempt in 1 2 3; do
-            echo "Attempt $attempt to archive and lock thread..."
-            
-            if curl -sS --fail --max-time 30 \
-              -X PATCH "https://discord.com/api/v10/channels/${THREAD_ID}" \
-              -H "Authorization: Bot $DISCORD_BOT_TOKEN" \
-              -H "Content-Type: application/json" \
-              -d '{"archived": true, "locked": true}'; then
-              
-              echo "Thread archived and locked successfully"
-              break
-            else
-              echo "Attempt $attempt failed"
-              if [ $attempt -eq 3 ]; then
-                echo "Failed to archive/lock thread after 3 attempts"
-                # 아카이브/잠금 실패도 치명적이지 않으므로 계속 진행
-                break
-              fi
-              sleep 5
-            fi
-          done
+          curl -sS --fail --max-time 30 \
+            -X PATCH "https://discord.com/api/v10/channels/${THREAD_ID}" \
+            -H "Authorization: Bot $DISCORD_BOT_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"archived": true, "locked": true}'
 
       - name: Update PR comment with final status
         if: ${{ github.event.action == 'closed' && env.THREAD_ID != '' }}
@@ -278,15 +208,11 @@ This pull request has been **${STATUS}** by @${ACTOR}.
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
-          
-          if ${{ github.event.pull_request.merged }}; then
-            STATUS="MERGED"
-            EMOJI="🎉"
+          if [ "${{ github.event.pull_request.merged }}" = "true" ]; then
+            STATUS="MERGED"; EMOJI="🎉"
           else
-            STATUS="CLOSED"
-            EMOJI="🔒"
+            STATUS="CLOSED"; EMOJI="🔒"
           fi
-          
           ACTOR='${{ github.actor }}'
           MARK="<!-- discord-thread-id -->"
           BODY="${MARK}
@@ -295,12 +221,9 @@ Thread ID: ${THREAD_ID}
 Status: **${STATUS}** by @${ACTOR}
 [View in Discord](https://discord.com/channels/@me/${THREAD_ID})"
 
-          # 기존 코멘트 업데이트
           CID=$(gh api "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
             --jq '.[] | select(.body | contains("'$MARK'")) | .id' 2>/dev/null | head -n1)
-
           if [ -n "$CID" ]; then
             gh api "repos/${{ github.repository }}/issues/comments/$CID" \
               -X PATCH -f body="$BODY" >/dev/null
-            echo "Updated PR comment with final status"
           fi
