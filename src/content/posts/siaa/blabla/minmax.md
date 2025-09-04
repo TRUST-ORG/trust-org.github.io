@@ -30,7 +30,7 @@ draft: false
 
 
    이렇게 함수를 만들어 코드를 작성해 제출했습니다.
-``` C
+```C
 #include<stdio.h>
 int n,b,k;
 int a[251][251]={}; // 초기 행렬
