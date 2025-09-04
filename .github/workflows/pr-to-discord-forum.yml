@@ -33,9 +33,9 @@ jobs:
           HEAD='${{ github.event.pull_request.head.ref }}'
           BASE='${{ github.event.pull_request.base.ref }}'
 
-          THREAD_NAME="#${NUMBER} - ${TITLE}"
+          THREAD_NAME="[PR] ${AUTHOR} - ${TITLE} (${HEAD} → ${BASE})"
 
-          CONTENT="**PR Opened**\n• **Author:** @${AUTHOR}\n• **PR:** [#${NUMBER}](${URL})\n• **Branch:** \`${HEAD}\` → \`${BASE}\`"
+          CONTENT="${AUTHOR}가 과제를 완료했어요!"
 
           jq -n \
             --arg thread_name "$THREAD_NAME" \
