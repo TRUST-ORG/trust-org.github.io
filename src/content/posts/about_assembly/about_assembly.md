@@ -3,7 +3,7 @@ title: 어셈블리어
 published: 2025-08-26
 author: 연골어류
 description: '간단한 어셈블리어에 대해 알아보자'
-image: 'https://lh5.googleusercontent.com/proxy/GoHmckCdrIJlFBlK1_fAv7Dhwx_15WaB9BaH78L8XaZPIN-PN35E9LxGAizpSuUmaMY2hLoDHkaltlvVtjDv2RLGqguapcR4EG9ErSZq'
+image: './img/20250827.png'
 tags: ["Blogging", "Customization"]
 category: 'Moru_Anvil'
 draft: false
