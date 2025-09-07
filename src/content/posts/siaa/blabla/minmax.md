@@ -30,7 +30,7 @@ draft: false
 
 
    이렇게 함수를 만들어 코드를 작성해 제출했습니다.
-```C
+```c
 #include<stdio.h>
 int n,b,k;
 int a[251][251]={}; // 초기 행렬
@@ -106,7 +106,7 @@ int main(void){
 
 ## 6. 코드수정
    각 함수의 반복문을 수정해 다시 작성하고 제출했습니다.
-```C
+```c
 #include<stdio.h>
 int n,b,k;
 int a[251][251]={}; // 초기 행렬
