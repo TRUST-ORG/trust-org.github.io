@@ -10,7 +10,7 @@ draft: false
 ---
 ## BOF (Buffer OverFlow)란?
 
-프로그래밍에서 발생하는 대표적 보안 취약점 중 하나다.
+프로그래밍에서 발생하는 대표적 보안 취약점 중 하나이다.
 
 ```c
 #include <stdio.h>
