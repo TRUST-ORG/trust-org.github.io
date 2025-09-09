@@ -1,6 +1,6 @@
 ---
 title: 2025 고1 9월 모의고사 29,30 해설
-published: 2025-09-9
+published: 2025-09-09
 author: deom
 description: '오답률 1,2위 문제 해설'
 image: ''
