@@ -65,7 +65,7 @@ for i in range(800):
 
 #crt
 ---
-crt란 chinese remainder theoreme의 약자로 '중국인의 나머지 정리'라고도 불린다. crt는 연립합동식의 유일한 해를 찾는 정리이다. 
+crt란 chinese remainder theorem의 약자로 '중국인의 나머지 정리'라고도 불린다. crt는 연립합동식의 유일한 해를 찾는 정리이다. 
 
 $x\equiv a_1​ \pmod {n_{​1}} ,x≡a_2 \pmod {n{2}}​,…,x≡a_k​ \pmod {n{k}​}$이 있을 때 $n1​,n2​,…,nk$ 가 서로소라면 이 모든 조건을 동시에 만족하는 해는 $N \equiv n_1​×n_2​×⋯×n_k​$의 범위 내에서 유일하게 존재한다. 
 
