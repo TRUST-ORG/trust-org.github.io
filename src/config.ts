@@ -46,7 +46,7 @@ export const navBarConfig: NavBarConfig = {
 		LinkPreset.About,
 		{
 			name: "GitHub",
-			url: "https://github.com/TRUST-DIMIGO", // Internal links should not include the base path, as it is automatically added
+			url: "https://github.com/TRUST-ORG", // Internal links should not include the base path, as it is automatically added
 			external: true, // Show an external link icon and will open in a new tab
 		},
 	],
@@ -67,7 +67,7 @@ export const profileConfig: ProfileConfig = {
 		{
 			name: "GitHub",
 			icon: "fa6-brands:github",
-			url: "https://github.com/TRUST-DIMIGO",
+			url: "https://github.com/TRUST-ORG",
 		},
 		{
 			name: "Instagram",
