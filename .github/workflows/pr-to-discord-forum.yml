@@ -1,0 +1,50 @@
+name: PR → Discord Forum (opened only)
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  discord_forum_notify:
+    runs-on: ubuntu-latest
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }} # 포럼 채널 Webhook URL
+    steps:
+      - name: Check webhook secret
+        run: |
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "Error: DISCORD_WEBHOOK_URL secret is missing."
+            exit 1
+          fi
+
+      - name: Install jq
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y jq
+
+      - name: Create forum thread via Discord webhook
+        run: |
+          set -e
+
+          TITLE='${{ github.event.pull_request.title }}'
+          NUMBER='${{ github.event.pull_request.number }}'
+          URL='${{ github.event.pull_request.html_url }}'
+          AUTHOR='${{ github.event.pull_request.user.login }}'
+          HEAD='${{ github.event.pull_request.head.ref }}'
+          BASE='${{ github.event.pull_request.base.ref }}'
+
+          THREAD_NAME="[PR] ${AUTHOR} - ${TITLE} (${HEAD} → ${BASE})"
+
+          CONTENT="${AUTHOR}가 과제를 완료했어요!"
+
+          jq -n \
+            --arg thread_name "$THREAD_NAME" \
+            --arg content "$CONTENT" \
+            '{thread_name: $thread_name, content: $content}' > payload.json
+
+          curl -sS --fail \
+            -X POST "$DISCORD_WEBHOOK?wait=true" \
+            -H "Content-Type: application/json" \
+            -d @payload.json
+
+          echo "Forum thread created."
