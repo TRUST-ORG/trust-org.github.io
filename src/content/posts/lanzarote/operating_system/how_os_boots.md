@@ -3,7 +3,7 @@ title: 컴퓨터는 어떻게 부팅하는가?
 published: 2025-09-10
 author: Lanzarote
 description: '컴퓨터가 부팅하는 과정에 대해 구체적으로 알아봅시다.'
-image: ''
+image: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2F3.bp.blogspot.com%2F-xigjplXLFH4%2FWckhYcHzGoI%2FAAAAAAAAI2M%2Fe2WOBOFNBSM02yA3D2SGSjwjU5MQ4dy1wCLcBGAs%2Fs1600%2FLinux-Booting-process.png&f=1&nofb=1&ipt=3c0313dd72dc2254aea4ab4df2ea6f1c25abbd80134f6f58eddfe61f9b7110b5'
 tags: ["OS"]
 category: 'Operating System'
 draft: false
