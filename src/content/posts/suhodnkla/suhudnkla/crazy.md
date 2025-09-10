@@ -3,7 +3,6 @@ title: C언어 괴랄하게 작성하는 법
 published: 2025-09-10
 author: suhodnkla
 description: 'C언어 괴랄하게'
-image: 
 tags: ["C"]
 category: 'Code'
 draft: false
