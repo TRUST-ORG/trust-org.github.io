@@ -17,7 +17,7 @@ draft: false
 
 위 링크로 접속 후 회원가입을 한다.
 
-![APIKey]("./img/key.png")
+![APIKey](./img/key.png)
 
 회원가입 후 API 키를 발급받은 다음 복사해 놓는다.
 
