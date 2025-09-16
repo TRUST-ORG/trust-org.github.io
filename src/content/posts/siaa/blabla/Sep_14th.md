@@ -2,7 +2,7 @@
 title: 함수호출 규약
 published: 2025-09-16
 author: siaa
-description: ''
+description: '함수호출규약을 공부했어요'
 image: ''
 tags: ["Pwn"]
 category: 'PWN'
