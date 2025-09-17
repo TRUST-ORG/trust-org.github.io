@@ -5,7 +5,7 @@ author: "Lyla4"
 description: '리버싱 딸깍하기'
 image: './img/TTalKKak.png'
 tags: ["리버싱","해킹"]
-category: 'Lyla4'
+category: 'REV'
 draft: false
 ---
 
