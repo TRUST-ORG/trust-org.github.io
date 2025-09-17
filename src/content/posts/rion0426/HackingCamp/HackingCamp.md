@@ -5,7 +5,7 @@ author: "Lyla4"
 description: '해킹캠프에 다녀왔습니다.'
 image: './img/HCLogo.png'
 tags: ["CTF","해킹캠프"]
-category: 'Lyla4'
+category: 'CTF'
 draft: false
 ---
 2025 해킹캠프에 다녀왔다. 서류 쓰고 나서 불합격할까봐 굉장히 가슴졸이고 있었는데 붙어서 너무 좋았다.
